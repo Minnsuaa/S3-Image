@@ -1,9 +1,7 @@
 package com.example.s3image.service;
 
-import com.example.s3image.exception.DeleteImageFailedException;
-import com.example.s3image.exception.ImageNotFoundException;
-import com.example.s3image.exception.InvalidImageException;
-import com.example.s3image.exception.UploadImageFailedException;
+import com.example.s3image.error.ErrorCode;
+import com.example.s3image.error.S3ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -45,7 +43,7 @@ public class S3Service {
 
             s3Client.putObject(object, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (Exception e) {
-            throw UploadImageFailedException.EXCEPTION;
+            throw new S3ImageException(ErrorCode.UPLOAD_IMAGE_FAILED);
         }
     }
 
@@ -62,18 +60,19 @@ public class S3Service {
 
             s3Client.deleteObject(object);
         } catch (Exception e) {
-            throw DeleteImageFailedException.EXCEPTION;
+            throw new S3ImageException(ErrorCode.DELETE_IMAGE_FAILED);
         }
     }
 
     private void validate(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
-            throw ImageNotFoundException.EXCEPTION;
+            throw new S3ImageException(ErrorCode.IMAGE_NOT_FOUND);
         }
 
         String extension = getExtension(fileName);
         if (!IMAGE_EXTENSIONS.contains(extension)) {
-            throw InvalidImageException.EXCEPTION;
+            throw new S3ImageException(ErrorCode.INVALID_IMAGE);
+            //throw InvalidImageException.EXCEPTION;
         }
     }
 
