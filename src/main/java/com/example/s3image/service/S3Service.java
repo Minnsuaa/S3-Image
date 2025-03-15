@@ -72,7 +72,6 @@ public class S3Service {
         String extension = getExtension(fileName);
         if (!IMAGE_EXTENSIONS.contains(extension)) {
             throw new S3ImageException(ErrorCode.INVALID_IMAGE);
-            //throw InvalidImageException.EXCEPTION;
         }
     }
 
